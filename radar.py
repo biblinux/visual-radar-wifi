@@ -55,10 +55,9 @@ def auto_refresh_scan(interval=6.5):
 
 def draw_radar(sweep_angle):
     screen.fill(BLACK)
-    radar_surface.fill((0, 0, 0, 0))  # clear titik
-    trail_surface.fill((0, 0, 0, 15))  # semi-clear trail dengan alpha untuk fade
+    radar_surface.fill((0, 0, 0, 0))
+    trail_surface.fill((0, 0, 0, 15))
 
-    # Lingkaran dan sumbu
     for r in range(50, RADIUS + 1, 50):
         pygame.draw.circle(screen, GREEN, CENTER, r, 1)
     for angle in range(0, 360, 45):
@@ -69,7 +68,6 @@ def draw_radar(sweep_angle):
 
     now = time.time()
 
-    # Aura sweep dan trail
     for offset in range(-6, 7):
         alpha = max(0, 180 - abs(offset) * 25)
         aura_color = (0, 255, 0, alpha)
@@ -78,12 +76,10 @@ def draw_radar(sweep_angle):
         y = CENTER[1] + RADIUS * math.sin(sweep)
         pygame.draw.line(radar_surface, aura_color, CENTER, (x, y), 2)
 
-    # Tambahkan sweep ke jejak
     x1 = CENTER[0] + RADIUS * math.cos(sweep_angle)
     y1 = CENTER[1] + RADIUS * math.sin(sweep_angle)
     pygame.draw.line(trail_surface, (0, 255, 0, 40), CENTER, (x1, y1), 2)
 
-    # Titik WiFi
     for net in networks:
         angle = net['angle']
         signal = net['signal']
@@ -96,9 +92,8 @@ def draw_radar(sweep_angle):
             net['last_seen'] = now
             net['alpha'] = 255
 
-        # Lama fade: 3 detik
         time_since = now - net['last_seen']
-        net['alpha'] = max(0, 255 - int(time_since * 85))  # 85 alpha/second
+        net['alpha'] = max(0, 255 - int(time_since * 85))
 
         if net['alpha'] > 0:
             fade_color = (255, 60, 60, net['alpha'])
@@ -109,7 +104,6 @@ def draw_radar(sweep_angle):
     screen.blit(trail_surface, (0, 0))
     screen.blit(radar_surface, (0, 0))
 
-# Main loop
 running = True
 sweep_angle = 0
 scan_wifi()
